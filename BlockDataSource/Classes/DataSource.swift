@@ -248,6 +248,7 @@ extension DataSource: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let header = self[section].header else { return nil }
         guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: header.reuseIdentifier) else { return nil }
+        header.configure(view)
         return view
     }
 
