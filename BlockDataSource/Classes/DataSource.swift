@@ -254,7 +254,7 @@ extension DataSource: UITableViewDelegate {
 
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if let header = self.tableView(tableView, viewForHeaderInSection: section) {
-            return header.frame.height
+            return header.frame.height == 0 ? UITableViewAutomaticDimension : header.frame.height
         } else {
             return 0
         }
