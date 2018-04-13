@@ -103,6 +103,7 @@ public class DataSource: NSObject {
 public class Reusable {
     public var configure: ConfigureBlock
     public var viewClass: UIView.Type
+    public var sectionHeaderFooterHeight: CGFloat?
 
     public var customReuseIdentifier: String?
     public var reuseIdentifier: String {
@@ -111,6 +112,11 @@ public class Reusable {
         } else {
             return String(describing: viewClass)
         }
+    }
+
+    public convenience init<View: UITableViewHeaderFooterView>(sectionHeaderFooterHeight: CGFloat?, customReuseIdentifier: String? = nil, configure: @escaping (View) -> Void) {
+        self.init(customReuseIdentifier: customReuseIdentifier, configure: configure)
+        self.sectionHeaderFooterHeight = sectionHeaderFooterHeight
     }
 
     public init<View: UIView>(customReuseIdentifier: String? = nil, configure: @escaping (View) -> Void) {
@@ -253,8 +259,10 @@ extension DataSource: UITableViewDelegate {
     }
 
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if let header = self.tableView(tableView, viewForHeaderInSection: section) {
-            return header.frame.height == 0 ? UITableViewAutomaticDimension : header.frame.height
+        if let header = self[section].header, let height = header.sectionHeaderFooterHeight {
+            return height
+        } else if let header = self.tableView(tableView, viewForHeaderInSection: section) {
+            return header.frame.height
         } else {
             return 0
         }
@@ -273,7 +281,9 @@ extension DataSource: UITableViewDelegate {
     }
 
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if let footer = self.tableView(tableView, viewForFooterInSection: section) {
+        if let footer = self[section].footer, let height = footer.sectionHeaderFooterHeight {
+            return height
+        } else if let footer = self.tableView(tableView, viewForFooterInSection: section) {
             return footer.frame.height
         } else {
             return 0
