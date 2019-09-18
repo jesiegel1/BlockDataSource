@@ -57,13 +57,13 @@ public extension UICollectionView {
     public func registerReuseIdentifiers(forDataSource dataSource: DataSource) {
         for section in dataSource.sections {
             if let header = section.header {
-                register(sectionDecoration: header, kind: UICollectionElementKindSectionHeader)
+                register(sectionDecoration: header, kind: UICollectionView.elementKindSectionHeader)
             }
             for item in section.items {
                 register(item: item)
             }
             if let footer = section.footer {
-                register(sectionDecoration: footer, kind: UICollectionElementKindSectionFooter)
+                register(sectionDecoration: footer, kind: UICollectionView.elementKindSectionFooter)
             }
         }
     }

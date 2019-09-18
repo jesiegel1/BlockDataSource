@@ -16,7 +16,7 @@ class CollectionExampleViewController: BlockCollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        images = (0..<100).flatMap { n in
+        images = (0..<100).compactMap { n in
             if n % 2 == 0 {
                 return UIImage(named: "king_burger")
             } else {
