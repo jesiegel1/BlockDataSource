@@ -257,7 +257,7 @@ extension DataSource: UITableViewDelegate {
         if let header = self.tableView(tableView, viewForHeaderInSection: section) {
             return header.frame.height
         } else {
-            return UITableViewAutomaticDimension
+            return UITableView.automaticDimension
         }
     }
 
@@ -277,7 +277,7 @@ extension DataSource: UITableViewDelegate {
         if let footer = self.tableView(tableView, viewForFooterInSection: section) {
             return footer.frame.height
         } else {
-            return UITableViewAutomaticDimension
+            return UITableView.automaticDimension
         }
     }
 
@@ -291,16 +291,16 @@ extension DataSource: UITableViewDelegate {
         return item.onDelete != nil || item.reorderable == true
     }
 
-    public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         guard let _ = self[indexPath].onDelete else { return .none }
         return .delete
     }
 
-    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             if let onDelete = self[indexPath].onDelete {
                 sections[indexPath.section].items.remove(at: indexPath.item)
-                tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
+                tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.fade)
                 onDelete(indexPath)
             }
         }
@@ -367,12 +367,12 @@ extension DataSource: UICollectionViewDataSource {
 
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let section = self[indexPath.section]
-        if kind == UICollectionElementKindSectionHeader {
+        if kind == UICollectionView.elementKindSectionHeader {
             guard let header = section.header else { return UICollectionReusableView() }
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: header.reuseIdentifier, for: indexPath)
             header.configure(view)
             return view
-        } else if kind == UICollectionElementKindSectionFooter {
+        } else if kind == UICollectionView.elementKindSectionFooter {
             guard let footer = section.footer else { return UICollectionReusableView() }
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: footer.reuseIdentifier, for: indexPath)
             footer.configure(view)

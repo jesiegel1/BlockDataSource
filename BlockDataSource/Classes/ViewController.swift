@@ -79,7 +79,7 @@ public extension CollectionViewReloadable {
 }
 
 public protocol CollectionViewConfigurable: DataSourceProvidable {
-    var collectionView: UICollectionView? { get }
+    var collectionView: UICollectionView! { get }
     func configure(dataSource: DataSource)
 }
 
