@@ -103,7 +103,6 @@ public class DataSource: NSObject {
 public class Reusable {
     public var configure: ConfigureBlock
     public var viewClass: UIView.Type
-    public var sectionHeaderFooterHeight: CGFloat?
 
     public var customReuseIdentifier: String?
     public var reuseIdentifier: String {
@@ -112,11 +111,6 @@ public class Reusable {
         } else {
             return String(describing: viewClass)
         }
-    }
-
-    public convenience init<View: UITableViewHeaderFooterView>(sectionHeaderFooterHeight: CGFloat?, customReuseIdentifier: String? = nil, configure: @escaping (View) -> Void) {
-        self.init(customReuseIdentifier: customReuseIdentifier, configure: configure)
-        self.sectionHeaderFooterHeight = sectionHeaderFooterHeight
     }
 
     public init<View: UIView>(customReuseIdentifier: String? = nil, configure: @escaping (View) -> Void) {
@@ -204,6 +198,8 @@ public struct Section {
 /// Passing in a type of UICollectionViewCell or UITableViewCell will cause the middleware to be applied to
 /// all items. The indexPath of the item that the middleware is being applied to as well as the dataSource structure are also
 /// passed in to allow the middleware to be aware of context.
+///
+/// NOTE: This is probably not production ready as applying all the middleware to each cell is O(n) 
 public struct Middleware {
     public var apply: (UIView, IndexPath, [Section]) -> Void
     public init<View: UIView>(apply: @escaping (View, IndexPath, [Section]) -> Void) {
@@ -254,17 +250,14 @@ extension DataSource: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let header = self[section].header else { return nil }
         guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: header.reuseIdentifier) else { return nil }
-        header.configure(view)
         return view
     }
 
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if let header = self[section].header, let height = header.sectionHeaderFooterHeight {
-            return height
-        } else if let header = self.tableView(tableView, viewForHeaderInSection: section) {
+        if let header = self.tableView(tableView, viewForHeaderInSection: section) {
             return header.frame.height
         } else {
-            return 0
+            return UITableViewAutomaticDimension
         }
     }
 
@@ -281,12 +274,10 @@ extension DataSource: UITableViewDelegate {
     }
 
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if let footer = self[section].footer, let height = footer.sectionHeaderFooterHeight {
-            return height
-        } else if let footer = self.tableView(tableView, viewForFooterInSection: section) {
+        if let footer = self.tableView(tableView, viewForFooterInSection: section) {
             return footer.frame.height
         } else {
-            return 0
+            return UITableViewAutomaticDimension
         }
     }
 
